@@ -1,0 +1,23 @@
+/* src/index.css */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Đảm bảo html và body chiếm toàn bộ chiều cao viewport */
+  box-sizing: border-box; /* Quan trọng để padding không làm tăng kích thước */
+}
+
+body {
+  overflow-y: scroll; /* Đảm bảo thanh cuộn dọc hoạt động */
+  overflow-x: hidden; /* Chỉ ẩn cuộn ngang nếu không có nội dung tràn ra */
+  background: #1B262C; /* Màu nền chung của trang */
+}
+
+#root {
+  min-height: 100vh; /* Đảm bảo #root luôn cao bằng viewport */
+  display: flex;
+  flex-direction: column; /* Quan trọng để Navbar/Footer và nội dung chính được sắp xếp flex */
+  max-width: 100vw; /* Đảm bảo không bị tràn ngang */
+  box-sizing: border-box;
+}
+
