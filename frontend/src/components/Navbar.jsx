@@ -1,32 +1,33 @@
 import React, { useState, useEffect } from "react";
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Button as MuiButton,
-  Avatar,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  InputBase,
-  Menu,
-  MenuItem,
-  Divider,
-  Badge,
-  ListItemIcon,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Typography,
+    Button as MuiButton,
+    Avatar,
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    Box,
+    InputBase,
+    Menu,
+    MenuItem,
+    Divider,
+    Badge,
+    ListItemIcon,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import PersonIcon from '@mui/icons-material/Person';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { Link, useNavigate } from "react-router-dom";
 import { styled, alpha } from '@mui/material/styles';
 
@@ -82,14 +83,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const Navbar = () => {
+const Navbar = ({ mode, toggleMode }) => {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userName, setUserName] = useState('');
     const [userAvatar, setUserAvatar] = useState('');
     const [anchorElAccount, setAnchorElAccount] = useState(null);
     const [cartItemCount, setCartItemCount] = useState(0);
     const [active, setActive] = useState('Khám phá');
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -136,24 +136,29 @@ const Navbar = () => {
     };
 
     const accountMenuItems = [
-        { text: 'Trang tổng quan', path: '/customerdashboard', icon: <DashboardIcon fontSize="small"/> },
-        { text: 'Đơn hàng', path: '/orders', icon: <ListAltIcon fontSize="small"/> },
-        { text: 'Thông tin cá nhân', path: '/profile', icon: <PersonIcon fontSize="small"/> },
-        { text: 'Sản phẩm yêu thích', path: '/wishlist', icon: <FavoriteIcon fontSize="small"/> },
+        { text: 'Trang tổng quan', path: '/customerdashboard', icon: <DashboardIcon fontSize="small" /> },
+        { text: 'Đơn hàng', path: '/orders', icon: <ListAltIcon fontSize="small" /> },
+        { text: 'Thông tin cá nhân', path: '/profile', icon: <PersonIcon fontSize="small" /> },
+        { text: 'Sản phẩm yêu thích', path: '/wishlist', icon: <FavoriteIcon fontSize="small" /> },
     ];
 
     const drawerItems = [
-        { text: "Khám phá", path: "#", onClick: () => handleMenuItemClick("Khám phá", "#")},
-        { text: "Đăng nhập", path: "/login", onClick: () => handleMenuItemClick("Đăng nhập", "/login")},
-        { text: "Đăng ký", path: "/signup", onClick: () => handleMenuItemClick("Đăng ký", "/signup")},
-        ...(userName !== "Khách" ? accountMenuItems.map(item => ({...item, onClick: () => handleMenuItemClick(item.text, item.path)})) : []),
-        ...(userName !== "Khách" ? [{ text: "Đăng xuất", onClick: Logout, icon: <ExitToAppIcon fontSize="small"/> }] : []),
+        { text: 'Khám phá', path: '#', onClick: () => handleMenuItemClick('Khám phá', '#') },
+        { text: 'Đăng nhập', path: '/login', onClick: () => handleMenuItemClick('Đăng nhập', '/login') },
+        { text: 'Đăng ký', path: '/signup', onClick: () => handleMenuItemClick('Đăng ký', '/signup') },
+        ...(
+            userName !== 'Khách'
+                ? [
+                    ...accountMenuItems.map(item => ({ ...item, onClick: () => handleMenuItemClick(item.text, item.path) })),
+                    { text: 'Đăng xuất', onClick: Logout, icon: <ExitToAppIcon fontSize="small" /> }
+                ]
+                : []
+        ),
     ];
 
     const handleSearch = (searchTerm) => {
         const trimmedSearchTerm = searchTerm.trim();
         if (trimmedSearchTerm) {
-            console.log("Navbar is navigating to search with query:", trimmedSearchTerm);
             navigate(`/search?q=${encodeURIComponent(trimmedSearchTerm)}`);
         }
     };
@@ -161,9 +166,10 @@ const Navbar = () => {
     return (
         <>
             <AppBar position="sticky" sx={{
-                backgroundColor: COLORS.lightBlue,
+                backgroundColor: '#A6B0CF',
+                color: '#222222',
                 boxShadow: "none",
-                borderBottom: `1px solid ${COLORS.mediumBlue}`,
+                borderBottom: `1px solidrgb(71, 105, 187)`,
                 zIndex: 200,
             }}>
                 <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important', padding: { xs: '0 16px', md: '0 32px' } }}>
@@ -180,33 +186,39 @@ const Navbar = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-
                     <Box component={Link} to="/" sx={{
                         display: 'flex',
                         alignItems: 'center',
                         textDecoration: 'none',
-                        gap: '10px',
+                        gap: 1.5,
                         flexShrink: 0,
                     }}>
                         <img
                             src="/logo.png"
                             alt="Smart Practice Logo"
-                            style={{ height: "32px", width: "32px", objectFit: "contain" }}
+                            style={{ height: 32, width: 32, objectFit: 'contain' }}
                         />
                         <Typography
                             variant="h6"
                             noWrap
                             sx={{
-                                fontWeight: 800,
-                                fontSize: 22,
-                                color: COLORS.darkestBlue,
-                                display: { xs: 'none', sm: 'block' }
+                                fontFamily: 'Montserrat, Arial, sans-serif',
+                                fontWeight: 900,
+                                fontSize: { xs: 18, sm: 20, md: 22 },
+                                letterSpacing: 2,
+                                color: '#fff',
+                                textTransform: 'uppercase',
+                                ml: 0.5,
+                                lineHeight: 1.1,
+                                background: 'linear-gradient(90deg, #3F599C 0%, #274690 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                textShadow: '0 2px 8px #1B264F44',
                             }}
                         >
                             Julie Academy
                         </Typography>
                     </Box>
-
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', ml: 3, gap: 1 }}>
                         <MuiButton
                             component={Link}
@@ -229,7 +241,6 @@ const Navbar = () => {
                             Khám phá <Typography component="span" sx={{ fontSize: 14, ml: 0.5, lineHeight: 1 }}>▼</Typography>
                         </MuiButton>
                     </Box>
-
                     <Search sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1, maxWidth: { sm: 200, md: 280 }, mr: 3 }}>
                         <SearchIconWrapper>
                             <SearchIcon />
@@ -244,10 +255,8 @@ const Navbar = () => {
                             }}
                         />
                     </Search>
-
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-
                         <MuiButton
                             component={Link}
                             to="/login"
@@ -268,23 +277,22 @@ const Navbar = () => {
                         >
                             Đăng nhập
                         </MuiButton>
-
                         <MuiButton
                             variant="primary"
                             sx={{
                                 fontSize: 16,
                                 padding: '8px 22px',
-                                backgroundColor: COLORS.mediumBlue, // Nút Đăng ký có màu primary của bạn
+                                backgroundColor: COLORS.mediumBlue,
                                 color: COLORS.whiteText,
+                                textTransform: 'none',
                                 '&:hover': {
-                                    backgroundColor: COLORS.darkBlue, // Màu đậm hơn khi hover
+                                    backgroundColor: COLORS.darkBlue,
                                 },
                             }}
                             onClick={() => handleMenuItemClick("Đăng ký", "/signup")}
                         >
                             Đăng ký
                         </MuiButton>
-
                         <IconButton
                             size="large"
                             edge="end"
@@ -297,49 +305,52 @@ const Navbar = () => {
                         >
                             {userAvatar ? <Avatar src={userAvatar} sx={{ width: 32, height: 32 }} /> : <AccountCircleIcon />}
                         </IconButton>
+                        <IconButton onClick={toggleMode} color="inherit" aria-label="Chuyển dark/light mode">
+                            {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                        </IconButton>
                     </Box>
-
-                    <Menu
-                        id="account-menu-appbar"
-                        anchorEl={anchorElAccount}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        keepMounted
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        open={Boolean(anchorElAccount)}
-                        onClose={handleAccountMenuClose}
-                        sx={{ '& .MuiPaper-root': { minWidth: 220, backgroundColor: COLORS.darkestBlue, color: COLORS.whiteText } }}
-                    >
-                        <Box sx={{ padding: '10px 16px' }}>
-                            <Typography variant="subtitle1" noWrap sx={{ color: COLORS.whiteText }}>
-                                {userName || "Tài khoản"}
-                            </Typography>
-                        </Box>
-                        <Divider sx={{ backgroundColor: COLORS.mediumBlue }} />
-                        {accountMenuItems.map((item) => (
-                            <MenuItem key={item.text} onClick={() => handleMenuItemClick(item.text, item.path)} component={Link} to={item.path}
+                    {userName !== "Khách" && (
+                        <Menu
+                            id="account-menu-appbar"
+                            anchorEl={anchorElAccount}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            keepMounted
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                            open={Boolean(anchorElAccount)}
+                            onClose={handleAccountMenuClose}
+                            sx={{ '& .MuiPaper-root': { minWidth: 220, backgroundColor: COLORS.darkestBlue, color: COLORS.whiteText } }}
+                        >
+                            <Box sx={{ padding: '10px 16px' }}>
+                                <Typography variant="subtitle1" noWrap sx={{ color: COLORS.whiteText }}>
+                                    {userName || "Tài khoản"}
+                                </Typography>
+                            </Box>
+                            <Divider sx={{ backgroundColor: COLORS.mediumBlue }} />
+                            {accountMenuItems.map((item) => (
+                                <MenuItem key={item.text} onClick={() => handleMenuItemClick(item.text, item.path)} component={Link} to={item.path}
+                                    sx={{
+                                        '&:hover': { backgroundColor: COLORS.darkBlue },
+                                        color: COLORS.whiteText
+                                    }}
+                                >
+                                    {item.icon && <ListItemIcon sx={{ color: COLORS.whiteText }}>{item.icon}</ListItemIcon>}
+                                    <ListItemText primary={item.text} />
+                                </MenuItem>
+                            ))}
+                            <Divider sx={{ backgroundColor: COLORS.mediumBlue }} />
+                            <MenuItem onClick={Logout}
                                 sx={{
                                     '&:hover': { backgroundColor: COLORS.darkBlue },
                                     color: COLORS.whiteText
                                 }}
                             >
-                                {item.icon && <ListItemIcon sx={{ color: COLORS.whiteText }}>{item.icon}</ListItemIcon>}
-                                <ListItemText primary={item.text} />
+                                <ListItemIcon><ExitToAppIcon fontSize="small" sx={{ color: COLORS.whiteText }} /></ListItemIcon>
+                                <ListItemText primary="Đăng xuất" />
                             </MenuItem>
-                        ))}
-                        <Divider sx={{ backgroundColor: COLORS.mediumBlue }} />
-                        <MenuItem onClick={Logout}
-                            sx={{
-                                '&:hover': { backgroundColor: COLORS.darkBlue },
-                                color: COLORS.whiteText
-                            }}
-                        >
-                            <ListItemIcon><ExitToAppIcon fontSize="small" sx={{ color: COLORS.whiteText }} /></ListItemIcon>
-                            <ListItemText primary="Đăng xuất" />
-                        </MenuItem>
-                    </Menu>
+                        </Menu>
+                    )}
                 </Toolbar>
             </AppBar>
-
             <Drawer
                 anchor="left"
                 open={mobileOpen}
@@ -369,10 +380,9 @@ const Navbar = () => {
                         <MenuIcon />
                     </IconButton>
                 </Toolbar>
-
                 <Box sx={{ padding: '8px 16px' }}>
-                    <Search sx={{width: '100%', margin: '0', backgroundColor: alpha(COLORS.whiteText, 0.1)}}>
-                        <SearchIconWrapper sx={{color: COLORS.whiteText}}>
+                    <Search sx={{ width: '100%', margin: '0', backgroundColor: alpha(COLORS.whiteText, 0.1) }}>
+                        <SearchIconWrapper sx={{ color: COLORS.whiteText }}>
                             <SearchIcon />
                         </SearchIconWrapper>
                         <StyledInputBase
@@ -388,7 +398,6 @@ const Navbar = () => {
                         />
                     </Search>
                 </Box>
-
                 <List>
                     {drawerItems.map((item) => (
                         <ListItem button key={item.text} onClick={item.onClick} component={item.path ? Link : 'div'} to={item.path || undefined}
@@ -397,7 +406,7 @@ const Navbar = () => {
                                 color: COLORS.whiteText
                             }}
                         >
-                            {item.icon && <ListItemIcon sx={{color: COLORS.whiteText}}>{item.icon}</ListItemIcon>}
+                            {item.icon && <ListItemIcon sx={{ color: COLORS.whiteText }}>{item.icon}</ListItemIcon>}
                             <ListItemText
                                 primary={item.text}
                                 sx={{
@@ -413,4 +422,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default React.memo(Navbar);
