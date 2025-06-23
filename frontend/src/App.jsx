@@ -6,7 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import getTheme from './theme.jsx';
 
 const Navbar = lazy(() => import('./components/Navbar'));
-const HomePage = lazy(() => import('./pages/HomePage.jsx'));
+const HomePage = lazy(() => import('./pages/homePage.jsx'));
 const Footer = lazy(() => import('./components/Footer.jsx'));
 const Login = lazy(() => import('./pages/loginPage.jsx'));
 const SignUp = lazy(() => import('./pages/signupPage.jsx'));
