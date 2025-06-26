@@ -10,7 +10,7 @@ const HomePage = lazy(() => import('./pages/homePage.jsx'));
 const Footer = lazy(() => import('./components/Footer.jsx'));
 const Login = lazy(() => import('./pages/loginPage.jsx'));
 const SignUp = lazy(() => import('./pages/signupPage.jsx'));
-
+const TutorVoice = lazy(() => import('./pages/tutorVoicePage.jsx'));
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -43,6 +43,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="/tutor-voice" element={<TutorVoice />} />
                 </Routes>
               </Suspense>
             </Box>
