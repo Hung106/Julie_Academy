@@ -30,6 +30,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { Link, useNavigate } from "react-router-dom";
 import { styled, alpha } from '@mui/material/styles';
+import { useKeycloak } from '@react-keycloak/web';
 
 const COLORS = {
     darkestBlue: '#1B262C',
@@ -83,6 +84,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+
 const Navbar = ({ mode, toggleMode }) => {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userName, setUserName] = useState('');
@@ -91,19 +93,44 @@ const Navbar = ({ mode, toggleMode }) => {
     const [cartItemCount, setCartItemCount] = useState(0);
     const [active, setActive] = useState('Khám phá');
     const navigate = useNavigate();
+    const { keycloak } = useKeycloak();
 
-    useEffect(() => {
+    const roles = keycloak?.authenticated ? (keycloak.tokenParsed?.realm_access?.roles || []) : [];
+
+useEffect(() => {
+    if (keycloak?.authenticated) {
+        setUserName(
+            keycloak.tokenParsed?.name ||
+            keycloak.tokenParsed?.preferred_username ||
+            "Tài khoản"
+        );
+        setUserAvatar(""); 
+    } else {
         const mockUserData = localStorage.getItem('userData');
-        if (mockUserData) {
-            const parsedData = JSON.parse(mockUserData);
-            setUserName(parsedData.name || parsedData.username || "Tài khoản");
-            setUserAvatar(parsedData.avatar || "");
-        } else {
+        try {
+            if (mockUserData) {
+                const parsedData = JSON.parse(mockUserData);
+                setUserName(parsedData.name || parsedData.username || "Tài khoản");
+                setUserAvatar(parsedData.avatar || "");
+            } else {
+                setUserName("Khách");
+            }
+        } catch (e) {
             setUserName("Khách");
+            setUserAvatar("");
+            localStorage.removeItem('userData');
         }
-        const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItemCount(storedCartItems.length);
-    }, []);
+    }
+    let storedCartItems = [];
+    try {
+        const cartRaw = localStorage.getItem('cart');
+        storedCartItems = cartRaw ? JSON.parse(cartRaw) : [];
+    } catch (e) {
+        storedCartItems = [];
+        localStorage.removeItem('cart');
+    }
+    setCartItemCount(storedCartItems.length);
+}, [keycloak]);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -132,27 +159,43 @@ const Navbar = ({ mode, toggleMode }) => {
         localStorage.removeItem("userData");
         localStorage.removeItem("token");
         handleAccountMenuClose();
-        navigate('/');
+        if (keycloak?.authenticated) {
+            keycloak.logout();
+        } else {
+            navigate('/');
+        }
     };
 
+
+    // Các route theo role
+    const roleMenuItems = [];
+    if (roles.includes('tutor')) {
+        roleMenuItems.push({ text: 'Dashboard Gia sư', path: '/dashboard/tutor', icon: <DashboardIcon fontSize="small" /> });
+        roleMenuItems.push({ text: 'Voice Gia sư', path: '/tutor-voice', icon: <ListAltIcon fontSize="small" /> });
+    }
+    if (roles.includes('student')) {
+        roleMenuItems.push({ text: 'Dashboard Học sinh', path: '/dashboard/student', icon: <DashboardIcon fontSize="small" /> });
+    }
+    if (roles.includes('parent')) {
+        roleMenuItems.push({ text: 'Dashboard Phụ huynh', path: '/dashboard/parent', icon: <DashboardIcon fontSize="small" /> });
+    }
+
+    // Account menu items (for dropdown menu)
     const accountMenuItems = [
-        { text: 'Trang tổng quan', path: '/customerdashboard', icon: <DashboardIcon fontSize="small" /> },
-        { text: 'Đơn hàng', path: '/orders', icon: <ListAltIcon fontSize="small" /> },
-        { text: 'Thông tin cá nhân', path: '/profile', icon: <PersonIcon fontSize="small" /> },
-        { text: 'Sản phẩm yêu thích', path: '/wishlist', icon: <FavoriteIcon fontSize="small" /> },
+        ...roleMenuItems,
     ];
 
     const drawerItems = [
         { text: 'Khám phá', path: '#', onClick: () => handleMenuItemClick('Khám phá', '#') },
-        { text: 'Đăng nhập', path: '/login', onClick: () => handleMenuItemClick('Đăng nhập', '/login') },
-        { text: 'Đăng ký', path: '/signup', onClick: () => handleMenuItemClick('Đăng ký', '/signup') },
         ...(
-            userName !== 'Khách'
+            !keycloak?.authenticated
                 ? [
-                    ...accountMenuItems.map(item => ({ ...item, onClick: () => handleMenuItemClick(item.text, item.path) })),
+                    { text: 'Đăng nhập', path: '/login', onClick: () => handleMenuItemClick('Đăng nhập', '/login') }
+                ]
+                : [
+                    ...roleMenuItems.map(item => ({ ...item, onClick: () => handleMenuItemClick(item.text, item.path) })),
                     { text: 'Đăng xuất', onClick: Logout, icon: <ExitToAppIcon fontSize="small" /> }
                 ]
-                : []
         ),
     ];
 
@@ -240,6 +283,31 @@ const Navbar = ({ mode, toggleMode }) => {
                         >
                             Khám phá <Typography component="span" sx={{ fontSize: 14, ml: 0.5, lineHeight: 1 }}>▼</Typography>
                         </MuiButton>
+                        {/* Hiển thị các route theo role nếu đã đăng nhập */}
+                        {keycloak?.authenticated && roleMenuItems.map(item => (
+                            <MuiButton
+                                key={item.text}
+                                component={Link}
+                                to={item.path}
+                                color="inherit"
+                                sx={{
+                                    color: COLORS.darkestBlue,
+                                    fontWeight: 500,
+                                    fontSize: 17,
+                                    textTransform: 'none',
+                                    padding: '8px 12px',
+                                    borderRadius: '4px',
+                                    '&:hover': {
+                                        backgroundColor: COLORS.mediumBlue,
+                                        color: COLORS.whiteText,
+                                    },
+                                }}
+                                onClick={() => handleMenuItemClick(item.text, item.path)}
+                                startIcon={item.icon}
+                            >
+                                {item.text}
+                            </MuiButton>
+                        ))}
                     </Box>
                     <Search sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1, maxWidth: { sm: 200, md: 280 }, mr: 3 }}>
                         <SearchIconWrapper>
@@ -257,42 +325,28 @@ const Navbar = ({ mode, toggleMode }) => {
                     </Search>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <MuiButton
-                            component={Link}
-                            to="/login"
-                            color="inherit"
-                            sx={{
-                                color: COLORS.darkestBlue,
-                                fontWeight: 500,
-                                fontSize: 16,
-                                textTransform: 'none',
-                                padding: '8px 12px',
-                                borderRadius: '4px',
-                                '&:hover': {
-                                    backgroundColor: COLORS.darkBlue,
-                                    color: COLORS.whiteText,
-                                },
-                            }}
-                            onClick={() => handleMenuItemClick("Đăng nhập", "/login")}
-                        >
-                            Đăng nhập
-                        </MuiButton>
-                        <MuiButton
-                            variant="primary"
-                            sx={{
-                                fontSize: 16,
-                                padding: '8px 22px',
-                                backgroundColor: COLORS.mediumBlue,
-                                color: COLORS.whiteText,
-                                textTransform: 'none',
-                                '&:hover': {
-                                    backgroundColor: COLORS.darkBlue,
-                                },
-                            }}
-                            onClick={() => handleMenuItemClick("Đăng ký", "/signup")}
-                        >
-                            Đăng ký
-                        </MuiButton>
+                        {!keycloak?.authenticated ? (
+                            <MuiButton
+                                component={Link}
+                                to="/login"
+                                color="inherit"
+                                sx={{
+                                    color: COLORS.darkestBlue,
+                                    fontWeight: 500,
+                                    fontSize: 16,
+                                    textTransform: 'none',
+                                    padding: '8px 12px',
+                                    borderRadius: '4px',
+                                    '&:hover': {
+                                        backgroundColor: COLORS.darkBlue,
+                                        color: COLORS.whiteText,
+                                    },
+                                }}
+                                onClick={() => handleMenuItemClick("Đăng nhập", "/login")}
+                            >
+                                Đăng nhập
+                            </MuiButton>
+                        ) : null}
                         <IconButton
                             size="large"
                             edge="end"
@@ -309,7 +363,7 @@ const Navbar = ({ mode, toggleMode }) => {
                             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                         </IconButton>
                     </Box>
-                    {userName !== "Khách" && (
+                    {keycloak?.authenticated && (
                         <Menu
                             id="account-menu-appbar"
                             anchorEl={anchorElAccount}
