@@ -15,7 +15,6 @@ export default function TutorVoicePage() {
   } = useVoiceToText();
   const [copyButtonText, setCopyButtonText] = React.useState("Copy");
 
-  // UI event handlers
   const handleCopy = () => {
     if (fullTranscript) {
       copy().then(() => {

@@ -36,3 +36,5 @@ Desktop.ini
 *.swp
 *.tmp
 *~
+
+/src/generated/prisma

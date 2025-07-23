@@ -15,7 +15,6 @@ export function useVoiceToText() {
   const mediaRecorderRef = useRef(null);
   const streamRef = useRef(null);
 
-  // Bắt đầu hoặc dừng ghi âm
   const toggleRecording = useCallback(() => {
     if (isConnecting) return;
     setError(null);
@@ -26,7 +25,6 @@ export function useVoiceToText() {
     setIsRecording((prev) => !prev);
   }, [isConnecting, isRecording]);
 
-  // Xóa transcript và lỗi
   const clear = useCallback(() => {
     setCurrentTranscript("");
     setFinalTranscript("");
@@ -46,7 +44,7 @@ export function useVoiceToText() {
           }
           streamRef.current = stream;
           const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-          const wsHost = window.location.hostname === "localhost" ? "localhost:5000" : window.location.host;
+          const wsHost = window.location.hostname === "localhost" ? "103.153.72.184:5000" : window.location.host;
           const ws = new WebSocket(`${wsProtocol}${wsHost}/ws/voice-stream`);
           wsRef.current = ws;
 
@@ -109,7 +107,6 @@ export function useVoiceToText() {
       };
       connect();
     }
-    // Cleanup
     return () => {
       isCancelled = true;
       if (streamRef.current) {
@@ -124,10 +121,7 @@ export function useVoiceToText() {
     };
   }, [isRecording]);
 
-  // Tổng hợp transcript cuối cùng
   const fullTranscript = useMemo(() => (finalTranscript + " " + currentTranscript).trim(), [finalTranscript, currentTranscript]);
-
-  // Copy transcript
   const copy = useCallback(() => {
     if (fullTranscript) {
       return navigator.clipboard.writeText(fullTranscript);

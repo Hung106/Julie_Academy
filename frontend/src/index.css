@@ -1,21 +1,19 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
-  height: 100%; /* html, body luôn chiếm toàn bộ viewport */
+  height: 100%;
   box-sizing: border-box;
 }
-
 body {
   overflow-y: scroll;
   overflow-x: hidden;
   background: #1B262C;
 }
-
 #root {
-  min-height: 100vh; /* #root luôn cao bằng viewport */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   max-width: 100vw;
   box-sizing: border-box;
 }
-

@@ -1,7 +1,7 @@
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-  url: 'http://localhost:8080',
+  url: 'https://auth.julieacademy.io.vn',
   realm: 'Julie_Academy',
   clientId: 'Julie_Academy',
 });

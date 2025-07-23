@@ -71,7 +71,7 @@ function startVoiceWsServer(server) {
           content: transcript,
           isFinal: data.is_final
         };
-        if(ws.readyState === WebSocket.OPEN) {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify(payload));
           console.log("[Backend] Đã gửi transcript về frontend:", payload);
         }
@@ -83,7 +83,7 @@ function startVoiceWsServer(server) {
     // Xử lý lỗi từ Deepgram
     dgConnection.on(LiveTranscriptionEvents.Error, (error) => {
       console.error("[Backend] Lỗi từ Deepgram:", error);
-      if(ws.readyState === WebSocket.OPEN) {
+      if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: "error", message: "Lỗi xử lý âm thanh từ Deepgram." }));
         console.log("[Backend] Đã gửi lỗi Deepgram về frontend.");
       }
@@ -135,7 +135,7 @@ function startVoiceWsServer(server) {
     });
   }); // Kết thúc wss.on("connection")
 
-  console.log("WebSocket server đang lắng nghe trên ws://localhost:5000/ws/voice-stream");
+  console.log("WebSocket server đang lắng nghe trên ws://localhostlocalhost:5000/ws/voice-stream");
 }
 
 module.exports = startVoiceWsServer;

@@ -1,12 +1,24 @@
-# Node
+# Node & Vite
 node_modules/
-.env
+.env*
+dist/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-# Editor
+
+# Editor & OS
 .vscode/
 .DS_Store
+Thumbs.db
+
+# Build output
+build/
+
+# Misc
+coverage/
+.parcel-cache/
+.eslintcache
