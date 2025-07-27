@@ -8,7 +8,7 @@ body {
 body {
   overflow-y: scroll;
   overflow-x: hidden;
-  background: #1B262C;
+  background: #1b262c;
 }
 #root {
   min-height: 100vh;

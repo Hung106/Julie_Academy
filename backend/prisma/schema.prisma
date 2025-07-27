@@ -17,20 +17,74 @@ model User {
   middleName String?    @map("middle_name")
   lastName   String?    @map("last_name")
   avatarUrl  String?    @map("avatar_url")
-  questions  Question[]
-
+  createdQuestions Question[]   @relation("CreatedQuestions")
+  
   @@map("users")
 }
 
 model Question {
-  id             String       @id @default(uuid())
-  author         User         @relation(fields: [authorId], references: [id])
-  authorId       String       @map("author_id")
-  questionType   String       @map("question_type")
-  questionData   Json         @map("question_data")
-  tags           Json?        
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
-
+  id               String       @id @default(uuid()) 
+  content          String
+  difficulty       Difficulty
+  explanation      String?
+  type             QuestionType
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+  creatorId        String       @map("creator_id")
+  creator          User         @relation("CreatedQuestions", fields: [creatorId], references: [id])
+  answers          Answer[]
+  skills           QuestionSkill[]
+  
   @@map("questions")
+}
+
+model Answer {
+  id               Int          @id @default(autoincrement())
+  questionId       String       @map("question_id") 
+  content          String
+  isCorrect        Boolean      
+  orderIndex       Int?         
+  createdAt        DateTime     @default(now()) @map("created_at")
+  question         Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  @@map("answers")
+}
+
+model Skill {
+  id               Int          @id @default(autoincrement())
+  skillName String @unique @map("skill_name")
+  subject          String
+  description      String?
+  createdAt        DateTime     @default(now()) @map("created_at")
+  questions        QuestionSkill[]
+  @@map("skills")
+}
+
+
+model QuestionSkill {
+  questionId       String       @map("question_id")
+  skillId          Int          @map("skill_id")
+  question         Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  skill            Skill        @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  @@id([questionId, skillId])
+  @@map("question_skills")
+}
+
+
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE_SINGLE
+  MULTIPLE_CHOICE_MULTI
+  FILL_IN_BLANK
+  ORDERING
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }

@@ -1,13 +1,14 @@
-const Keycloak = require('keycloak-connect');
-const config = require('../config/config');
+const Keycloak = require("keycloak-connect");
+const config = require("../config/config");
 
 const keycloakConfig = {
   realm: config.keycloak.realm,
-  'auth-server-url': config.keycloak.url,
-  'ssl-required': 'external',
+  "auth-server-url": config.keycloak.url,
+  "ssl-required": "external",
   resource: config.keycloak.frontend_client_id,
-  'public-client': true,
-  'confidential-port': 0,
+  "public-client": true,
+  "confidential-port": 0,
+  "bearer-only": true,
 };
 
 const keycloak = new Keycloak({}, keycloakConfig);

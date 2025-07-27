@@ -1,5 +1,5 @@
-import { useKeycloak } from '@react-keycloak/web';
-import { Navigate } from 'react-router-dom';
+import { useKeycloak } from "@react-keycloak/web";
+import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ allowedRoles, children }) {
   const { keycloak } = useKeycloak();
@@ -7,7 +7,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
   if (!keycloak?.authenticated) return <Navigate to="/login" replace />;
 
   const roles = keycloak.tokenParsed?.realm_access?.roles || [];
-  const hasRole = allowedRoles.some(role => roles.includes(role));
+  const hasRole = allowedRoles.some((role) => roles.includes(role));
 
   if (!hasRole) return <Navigate to="/" replace />;
 
